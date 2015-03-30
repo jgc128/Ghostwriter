@@ -11,6 +11,10 @@ from bs4 import BeautifulSoup
 ohhla_pages_all_cache = {}
 ohhla_artist_cache = {}
 
+def warning(*objs):
+	print("WARNING: ", *objs, file=sys.stderr)
+	# print("WARNING: ", *objs)
+
 # http://stackoverflow.com/a/3668771
 def meta_redirect(soup):
 
@@ -101,14 +105,14 @@ def get_ohhla_artist_albums(artist):
         ohhla_pages_all_cache[ohhla_page] = get_ohhla_all_pages_artist(ohhla_page)
 
     if artist not in ohhla_pages_all_cache[ohhla_page]:
-        print('Artist Not Found: ', artist)
+        warning('Artist Not Found: ', artist)
         return None
 
     if artist not in ohhla_artist_cache:
         album_song_links = get_ohhla_artist_song_links(ohhla_pages_all_cache[ohhla_page][artist]['url'])
 
         if album_song_links is None:
-            print('Manual Albums: ', artist)
+            warning('Manual Albums: ', artist)
             return None
 
         ohhla_artist_cache[artist] = album_song_links
@@ -188,7 +192,8 @@ for a in artist_album_data:
         continue
 
     if need_album_name not in artist_albums_data:
-        print('Album Not Found: ', need_album_name)
+        warning('Album Not Found: ', artist_name, ' - ', need_album_name)
         continue
 
     songs_data = download_album_songs(artist_name, need_album_name, artist_albums_data[need_album_name]['songs'], args.data_dir)
+
