@@ -12,8 +12,8 @@ ohhla_pages_all_cache = {}
 ohhla_artist_cache = {}
 
 def warning(*objs):
-	print("WARNING: ", *objs, file=sys.stderr)
-	# print("WARNING: ", *objs)
+    print("WARNING: ", *objs, file=sys.stderr)
+    # print("WARNING: ", *objs)
 
 # http://stackoverflow.com/a/3668771
 def meta_redirect(soup):
@@ -98,14 +98,14 @@ def get_ohhla_all_pages_artist(page):
 
     return results
 
-def get_ohhla_artist_albums(artist):
-    ohhla_page = get_ohhla_artist_page(artist)
+def get_ohhla_artist_albums(artist, search_letter):
+    ohhla_page = get_ohhla_artist_page(search_letter)
 
     if ohhla_page not in ohhla_pages_all_cache:
         ohhla_pages_all_cache[ohhla_page] = get_ohhla_all_pages_artist(ohhla_page)
 
     if artist not in ohhla_pages_all_cache[ohhla_page]:
-        warning('Artist Not Found: ', artist)
+        warning('Artist Not Found: ', artist, ohhla_page)
         return None
 
     if artist not in ohhla_artist_cache:
@@ -121,7 +121,7 @@ def get_ohhla_artist_albums(artist):
 
 
 
-def get_ohhla_artist_page(artist):
+def get_ohhla_artist_page(search_letter):
     ohhla_pages = [
         { 'start': 'a', 'end': 'e', 'page': 'all.html' },
         { 'start': 'f', 'end': 'j', 'page': 'all_two.html' },
@@ -130,10 +130,8 @@ def get_ohhla_artist_page(artist):
         { 'start': 'u', 'end': 'z', 'page': 'all_five.html' },
     ]
 
-
-    artist = artist[0].lower()
     for cat in ohhla_pages:
-        if artist >= cat['start'] and artist <= cat['end']:
+        if search_letter >= cat['start'] and search_letter <= cat['end']:
             return cat['page']
 
     return ohhla_pages[0]['page']
@@ -142,7 +140,7 @@ def read_data(filename):
     with open(filename, 'r') as csvfile:
         reader = csv.reader(csvfile)
 
-        res = [{'artist': r[0], 'album': r[1]} for r in reader]
+        res = [{'artist': r[0], 'album': r[1], 'search_letter': r[2] if len(r) > 2 else r[0][0] } for r in reader if len(r) != 0]
 
     return res
 
@@ -159,7 +157,7 @@ def save_song_text(data_dir, artis, album, song, song_text):
 
 def download_album_songs(artist, album, songs, data_dir):
     for s in songs:
-        print('Downloading: ', s['title'])
+        print('Downloading:', s['title'])
 
         data = soup_ohhla_page(s['url'])
 
@@ -180,13 +178,16 @@ args = parser.parse_args()
 
 artist_album_data = read_data(args.albums)
 
+print(artist_album_data)
+
 for a in artist_album_data:
     artist_name = a['artist'].strip().lower()
     need_album_name = a['album'].strip().lower()
-
+    search_letter = a['search_letter'].strip().lower()
+    
     print('Process:', artist_name, ' - ', need_album_name)
 
-    artist_albums_data = get_ohhla_artist_albums(artist_name)
+    artist_albums_data = get_ohhla_artist_albums(artist_name, search_letter)
 
     if artist_albums_data is None:
         continue
