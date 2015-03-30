@@ -49,16 +49,29 @@ def soup_ohhla_page(page):
 
     return soup
 
-def get_ohhla_artist_song_links(artist_page):
-    soup = soup_ohhla_page(artist_page)
+def get_ohhla_artist_song_links_dir_listing(artist_page, artist_page_soup):
+    result = {}
+    
+    albums_links = artist_page_soup.select('a')
+    albums_links = [{'title': s.string.strip(' /').lower(), 'url': s.attrs['href']} for s in albums_links if s.string.strip() != 'Parent Directory']
+    
+    for a_link in albums_links:
+        result[a_link['title']] = {'title':a_link['title'], 'songs': []}
 
+        # download list of songs in an album
+        a_link_full = artist_page + a_link['url']
+        album_page_soup = soup_ohhla_page(a_link_full)
+        songs_links = album_page_soup.select('a')
+
+        result[a_link['title']]['songs'] = [{'title': s.string.strip(' /').lower(), 'url': a_link_full + s.attrs['href']} for s in songs_links if s.string.strip() != 'Parent Directory']
+
+    return result
+
+
+def get_ohhla_artist_song_links_formatted(artist_page_soup):
     result = {}
 
     albums = soup.select('a[href^="YFA_"]')
-
-    if len(albums) == 0:
-        return None
-
     for a_album in albums:
         album_title = a_album.string.lower()
 
@@ -81,6 +94,18 @@ def get_ohhla_artist_song_links(artist_page):
         result[album_title] = {'title': album_title, 'songs': song_data}
 
     return result
+    
+    
+def get_ohhla_artist_song_links(artist_page):
+    soup = soup_ohhla_page(artist_page)
+
+    albums = soup.select('a[href^="YFA_"]')
+
+    if len(albums) == 0: # directody listing
+        return get_ohhla_artist_song_links_dir_listing(artist_page, soup)
+    else: # formatted page
+        return get_ohhla_artist_song_links_formatted(soup)
+
 
 
 def get_ohhla_all_pages_artist(page):
@@ -99,7 +124,7 @@ def get_ohhla_all_pages_artist(page):
     return results
 
 def get_ohhla_artist_albums(artist, search_letter):
-    ohhla_page = get_ohhla_artist_page(search_letter)
+    ohhla_page = get_ohhla_artist_page_name(search_letter)
 
     if ohhla_page not in ohhla_pages_all_cache:
         ohhla_pages_all_cache[ohhla_page] = get_ohhla_all_pages_artist(ohhla_page)
@@ -121,7 +146,7 @@ def get_ohhla_artist_albums(artist, search_letter):
 
 
 
-def get_ohhla_artist_page(search_letter):
+def get_ohhla_artist_page_name(search_letter):
     ohhla_pages = [
         { 'start': 'a', 'end': 'e', 'page': 'all.html' },
         { 'start': 'f', 'end': 'j', 'page': 'all_two.html' },
@@ -140,7 +165,7 @@ def read_data(filename):
     with open(filename, 'r') as csvfile:
         reader = csv.reader(csvfile)
 
-        res = [{'artist': r[0], 'album': r[1], 'search_letter': r[2] if len(r) > 2 else r[0][0] } for r in reader if len(r) != 0]
+        res = [{'artist': r[0], 'album': r[1] if len(r) > 1 else '<all_albums>', 'search_letter': r[2] if len(r) > 2 else r[0][0] } for r in reader if len(r) != 0]
 
     return res
 
@@ -178,8 +203,6 @@ args = parser.parse_args()
 
 artist_album_data = read_data(args.albums)
 
-print(artist_album_data)
-
 for a in artist_album_data:
     artist_name = a['artist'].strip().lower()
     need_album_name = a['album'].strip().lower()
@@ -192,9 +215,15 @@ for a in artist_album_data:
     if artist_albums_data is None:
         continue
 
-    if need_album_name not in artist_albums_data:
-        warning('Album Not Found: ', artist_name, ' - ', need_album_name)
-        continue
+    if need_album_name == '<all_albums>':
+        for a in artist_albums_data:
+            need_album_name = artist_albums_data[a]['title']
+            download_album_songs(artist_name, need_album_name, artist_albums_data[need_album_name]['songs'], args.data_dir)
+    else:
 
-    songs_data = download_album_songs(artist_name, need_album_name, artist_albums_data[need_album_name]['songs'], args.data_dir)
+        if need_album_name not in artist_albums_data:
+            warning('Album Not Found: ', artist_name, ' - ', need_album_name)
+            continue
+
+        download_album_songs(artist_name, need_album_name, artist_albums_data[need_album_name]['songs'], args.data_dir)
 
