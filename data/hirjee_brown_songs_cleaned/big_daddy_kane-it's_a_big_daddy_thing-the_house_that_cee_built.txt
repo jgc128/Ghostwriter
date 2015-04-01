@@ -1,3 +1,0 @@
-Warning:  include(/home/ohhla/www/anonymous//bigdaddy/bigdaddy/ceebuilt.bdk.txt): failed to open stream: No such file or directory in /home/ohhla/public_html/files/lyrics.php on line 67
-
-Warning:  include(): Failed opening '/home/ohhla/www/anonymous//bigdaddy/bigdaddy/ceebuilt.bdk.txt' for inclusion (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/ohhla/public_html/files/lyrics.php on line 67
