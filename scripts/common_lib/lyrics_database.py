@@ -1,5 +1,6 @@
 import os
 import json
+from collections import defaultdict
 
 class LyricsDatabse(object):
 	def __init__(self, data_dir):
@@ -7,14 +8,11 @@ class LyricsDatabse(object):
 		self.__lyrics_cache = None
 		
 	def __create_lyrics_cache(self):
-		self.__lyrics_cache = {}
+		self.__lyrics_cache = defaultdict(list)
 	
 		files = os.listdir(self.__data_dir)
 		for f in files:
 			artist = f.split('-')[0]
-			
-			if artist not in self.__lyrics_cache:
-				self.__lyrics_cache[artist] = []
 			
 			self.__lyrics_cache[artist].append(f)
 		
