@@ -9,6 +9,14 @@ def parse_lyrics( lyricFilePath ):
             continue
         elif len(line) >= 6 and line.lower()[:6] == 'chorus':
             continue
+        elif len(line) >= 4 and line.lower()[:4] == 'hook':
+            continue
+        elif line[0] == '\t' or line[0] == ' ':
+            continue
+        elif len(line) <= 6:
+            continue
+        elif len(line) >= 5 and line[:5] == 'Verse':
+            continue
         else:
             lineStrip = line.strip('\n')
             lineNoParens = sub(r'\([^)]*\)', '', lineStrip)
@@ -20,6 +28,8 @@ def parse_lyrics( lyricFilePath ):
             else:
                 tokens.append('<endLine>')
                 lyricsTokens += tokens
+    if lyricsTokens == []:
+        return []
     if lyricsTokens[-1] == '<startVerse>':
         del lyricsTokens[-1]
     if lyricsTokens[0] == '<endVerse>':
