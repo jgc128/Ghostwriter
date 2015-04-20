@@ -1,5 +1,6 @@
 import os
 import json
+import six
 from collections import defaultdict
 
 class LyricsDatabse(object):
@@ -36,7 +37,17 @@ class LyricsDatabse(object):
 		
 		return lyrics
 		
+	def get_lyrics_from_artist_as_plain_list(self, artist):
+		lyrics = self.get_lyrics_from_artist(artist)
 		
+		result = []
 		
+		for lyric in lyrics:
+			for word_or_list in lyric:
+				if isinstance(word_or_list, six.string_types):
+					result.append(word_or_list)
+				else:
+					result.extend(word_or_list)
 		
+		return result
 	
