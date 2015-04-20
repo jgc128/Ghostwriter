@@ -26,11 +26,9 @@ class GenPho( object ):
         
         elif after[0] == 'a':
             if len(after) == 1:
-                return phoList.append('AX')
-            elif len(after) == 3 and after[1:] == 're':
-                phoList += ['AA','R']
+                phoList.append('AX')
                 return phoList
-            elif len(after) >= 3 and after[1:3] == 'ro':
+            elif len(before) == 0 and len(after) >= 3 and after[1:3] == 'ro':
                 phoList += ['AX','R']
                 return self.get_oov_pho(last+after[:2], after[2:], phoList)
             elif len(after) >= 3 and after[1] == 'r' and self.pound(after[2]):
@@ -40,46 +38,50 @@ class GenPho( object ):
                 phoList += ['EY', 'S']
                 return self.get_oov_pho(last+after[:2], after[2:], phoList)
             elif len(after) >= 3 and after[1:3] == 'wa':
-                return self.get_oov_pho(last+after[:1], after[1:], phoList.append('AX'))
+                phoList.append('AX')
+                return self.get_oov_pho(last+after[:1], after[1:], phoList)
             elif len(after) >= 2 and after[1] == 'w':
-                return self.get_oov_pho(last+after[:2], after[2:], phoList.append('AO'))
-            elif len(after) >= 3 and len(before) == 0 and after[1:3] = 'NY':
+                phoList.append('AO')
+                return self.get_oov_pho(last+after[:2], after[2:], phoList)
+            elif len(after) >= 3 and after[1:3] = 'NY' and set(before).intersection(self.vowel) == set([]):
                 phoList += ['EH', 'N', 'IY']
                 return self.get_oov_pho(last+after[:3], after[3:], phoList)
-            elif len(after) >= 3 and len(before) > 0 and self.star(before[-1]) and after[1:3] = 'NY':
-                phoList+= ['EH', 'N', 'IY']
-                return self.get_oov_pho(last+after[:3], after[3:], phoList)
             elif len(after) >= 4 and self.star(after[1]) and self.plus(after[2]) and self.pound(after[3]):
-                return self.get_oov_pho(last+after[:1], after[1:], phoList.append('EY'))
+                phoList.append('EY')
+                return self.get_oov_pho(last+after[:1], after[1:], phoList)
             elif len(before) >= 1 and set(before).intersection(self.vowel) != set([]) and len(after) >= 4 and after[1:4] == 'lly':
                 phoList += ['AX', 'L', 'IY']
-                return self.get_oov_pho(last+after[:3], after[3:], phoList)
+                return self.get_oov_pho(last+after[:4], after[4:], phoList)
             elif len(before) == 0 and len(after) >= 3 and after[1] == 'l' and self.pound(after[2]):
                 phoList += ['AX', 'L']
                 return self.get_oov_pho(last+after[:2], after[2:], phoList)
             elif len(after) >= 5 and after[1:5] == 'gain':
                 phoList += ['AX', 'G', 'EH', 'N']
                 return self.get_oov_pho(last+after[:5], after[5:], phoList)
-            elif len(before) >= 1 and len(after) >= 3 and set(before).intersection(self.vowel) != set([]) and after[1] == 'a' and after[2] == 'e':
+            elif len(before) >= 1 and len(after) >= 3 and set(before).intersection(self.vowel) != set([]) and after[1] == 'g' and after[2] == 'e':
                 phoList += ['IH', 'JH']
                 return self.get_oov_pho(last+after[:2], after[2:], phoList)
             elif len(after) >= 4 and self.star(after[1]) and self.plus(after[2]) and set(after[3:]).intersection(self.vowel) != set([]):
-                return return self.get_oov_pho(last+after[:1], after[1:], phoList.append('AE'))
+                phoList.append('AE')
+                return return self.get_oov_pho(last+after[:1], after[1:], phoList)
             elif len(after) == 3 and set(before).intersection(self.vowel) == set([]) and self.star(after[1]) and self.plus(after[2]):
-                return self.get_oov_pho(last+after[:1], after[1:], phoList.append('EY'))
-            elif len(after) >= 3 and self.plus(after[1]) and self.percent(after[2:]):
-                return self.get_oov_pho(last+after[:1], after[1:], phoList.append('EY'))
+                phoList.append('EY')
+                return self.get_oov_pho(last+after[:1], after[1:], phoList)
+            elif len(after) >= 3 and self.star(after[1]) and self.percent(after[2:]):
+                phoList.append('EY')
+                return self.get_oov_pho(last+after[:1], after[1:], phoList)
             elif len(before) == 0 and len(after) >= 3 and after[1:3] == 'rr':
                 phoList += ['AX', 'R']
                 return self.get_oov_pho(last+after[:3], after[3:], phoList)
             elif len(after) >= 3 and after[1:3] =='rr':
                 phoList += ['AE', 'R']
                 return self.get_oov_pho(last+after[:3], after[3:], phoList)
-            elif set(before).intersection(self.vowel) == set([]) and len(after) >= 2 and after[1] == 'r':
+            elif set(before).intersection(self.vowel) == set([]) and len(after) == 2 and after[1] == 'r':
                 phoList += ['AA', 'R']
-                return self.get_oov_pho(last+after[:3], after[3:], phoList)
+                return phoList
             elif len(after) == 2 and after[1] == 'r':
-                return self.get_oov_pho(last+after[:2], after[2:], phoList.append('ER'))
+                phoList.append('ER')
+                return phoList
             elif len(after) >= 2 and after[1] == 'r':
                 phoList += ['AA', 'R']
                 return self.get_oov_pho(last+after[:2], after[2:], phoList)
@@ -87,11 +89,14 @@ class GenPho( object ):
                 phoList += ['EH', 'R']
                 return self.get_oov_pho(last+after[:3], after[3:], phoList)
             elif len(after) >= 2 and after[1] == 'i':
-                return self.get_oov_pho(last+after[:2], after[2:], phoList.append('EY'))
+                phoList.append('EY')
+                return self.get_oov_pho(last+after[:2], after[2:], phoList)
             elif len(after) >= 2 and after[1] == 'y':
-                return self.get_oov_pho(last+after[:2], after[2:], phoList.append('EY'))
+                phoList.append('EY')
+                return self.get_oov_pho(last+after[:2], after[2:], phoList)
             elif len(after) >= 2 and after[1] == 'u':
-                return self.get_oov_pho(last+after[:2], after[2:], phoList.append('AO'))
+                phoList.append('AO')
+                return self.get_oov_pho(last+after[:2], after[2:], phoList)
             elif len(after) == 2 and set(before).intersection(self.vowel) != set([]) and after[1] == 'l':
                 phoList += ['AX', 'L']
                 return phoList
@@ -108,13 +113,14 @@ class GenPho( object ):
                 phoList += ['EY', 'B', 'AX', 'L']
                 return self.get_oov_pho(last+after[:4], after[4:], phoList)
             elif len(after)>= 4 and after[1:4] == 'ble':
-                phoList += ['EY', 'B', 'AX', 'L']
+                phoList += ['AX', 'B', 'AX', 'L']
                 return self.get_oov_pho(last+after[:4], after[4:], phoList)
             elif len(after) >= 4 and after[1:3] == 'ng' and self.plus(after[3]):
                 phoList += ['EY', 'N', 'JH']
                 return self.get_oov_pho(last+after[:3], after[3:], phoList)
             else:
-                return self.get_oov_pho(last+after[:1], after[1:], phoList.append('AE'))
+                phoList.append('AE')
+                return self.get_oov_pho(last+after[:1], after[1:], phoList)
                 
         elif after[0] == 'b':
             if len(before) == 0 and len(after) >= 4 and after[1] == 'e' and self.star(after[2]) and self.pound(after[3]):
@@ -130,42 +136,54 @@ class GenPho( object ):
                 phoList += ['B', 'IH', 'L']
                 return self.get_oov_pho(last+after[:4], after[4:], phoList)
             else:
-                return self.get_oov_pho(last+after[:1], after[1:], phoList.append('B'))
+                phoList.append('B')
+                return self.get_oov_pho(last+after[:1], after[1:], phoList)
 
         elif after[0] == 'c':
             if len(before) == 0 and len(after) >= 3 and after[1] == 'h' and self.star(after[2]):
-                return self.get_oov_pho(last+after[:2], after[2:], phoList.append('K'))
+                phoList.append('K')
+                return self.get_oov_pho(last+after[:2], after[2:], phoList)
             elif len(before) >= 2 and len(after) >= 2 and self.star(before[-2]) and before[-1] == 'e' and after[1] == 'h':
-                return self.get_oov_pho(last+after[:2], after[2:], phoList.append('K'))
+                phoList.append('K')
+                return self.get_oov_pho(last+after[:2], after[2:], phoList)
             elif len(after) >= 2 and after[1] == 'h':
-                return self.get_oov_pho(last+after[:2], after[2:], phoList.append('CH'))
+                phoList.append('CH')
+                return self.get_oov_pho(last+after[:2], after[2:], phoList)
             elif len(before) == 1 and before[0] == 's' and len(after) >= 3 and after[1] == 'i' and self.pound(after[2]):
                 phoList += ['S', 'AY']
                 return self.get_oov_pho(last+after[:2], after[2:], phoList)
             elif after >= 3 and after[1:3] == 'ia':
-                return self.get_oov_pho(last+after[:2], after[2:], phoList.append('SH'))
+                phoList.append('SH')
+                return self.get_oov_pho(last+after[:2], after[2:], phoList)
             elif after >= 3 andafter[1:3] == 'io':
-                return self.get_oov_pho(last+after[:2], after[2:], phoList.append('SH'))
+                phoList.append('SH')
+                return self.get_oov_pho(last+after[:2], after[2:], phoList)
             elif after >= 4 and after[1:4] == 'ien':
-                return self.get_oov_pho(last+after[:2], after[2:], phoList.append('SH'))
+                phoList.append('SH')
+                return self.get_oov_pho(last+after[:2], after[2:], phoList)
             elif len(after) >= 2 and self.plus(after[1]):
-                return self.get_oov_pho(last+after[:1], after[1:], phoList.append('S'))
+                phoList.append('S')
+                return self.get_oov_pho(last+after[:1], after[1:], phoList)
             elif len(after) >= 2 and after[1] == 'k':
-                return self.get_oov_pho(last+after[:2], after[2:], phoList.append('K'))
+                phoList.append('K')
+                return self.get_oov_pho(last+after[:2], after[2:], phoList)
             elif len(after) >= 4 and after[1:3] == 'om' and self.percent(after[3:]):
                 phoList += ['K', 'AH', 'M']
                 return self.get_oov_pho(last+after[:3], after[3:], phoList)
             else:
-                return self.get_oov_pho(last+after[:1], after[1:], phoList.append('K'))
+                phoList.append('K')
+                return self.get_oov_pho(last+after[:1], after[1:], phoList)
 
         elif after[0] == 'd':
             if set(before).intersection(self.vowel) != set([]) and len(after) == 3 and after[1:3] == 'ed':
                 phoList += ['D', 'IH', 'D']
                 return phoList
             elif len(before) >= 2 and before[-1] == 'e' and self.dot(before[-2]) and len(after) == 1:
-                return phoList.append('D')
-            elif len(before) >= 2 and len(after) == 1 and self.star(before[-1]) and set(before).intersection(self.vowel) != set([]):
-                return phoList.append('T')
+                phoList.append('D')
+                return phoList
+            elif len(before) >= 3 and len(after) == 1 and before[-1] == 'e' and self.star(before[-2]) and set(before[:-2]).intersection(self.vowel) != set([]):
+                phoList.append('T')
+                return phoList
             elif len(before) == 0 and len(after) >= 4 and after[1] == 'e' and self.star(after[2]) and self.pound(after[3]):
                 phoList += ['D', 'IH']
                 return self.get_oov_pho(last+after[:2], after[2:], phoList)
@@ -180,9 +198,10 @@ class GenPho( object ):
                 return self.get_oov_pho(last+after[:3], after[3:], phoList)
             elif len(after) >= 3 and after[1:3] == 'ua':
                 phoList += ['JH', 'UW']
-                return self.get_oov_pho(last+after[:3], after[3:], phoList)
+                return self.get_oov_pho(last+after[:2], after[2:], phoList)
             else:
-                return self.get_oov_pho(last+after[:1], after[1:], phoList.append('D'))
+                phoList.append('D')
+                return self.get_oov_pho(last+after[:1], after[1:], phoList)
 
         elif after[0] == 'e':
             if len(before) >= 1 and len(after) == 1 and set(before).intersection(self.vowel) != set([]):
@@ -645,11 +664,240 @@ class GenPho( object ):
                 return phoList.append('Z')
             elif len(before) >= 3 and len(after) == 1 and before[-1] == 'e' and self.dot(before[-2]) and set(before[:-2]).intersection(self.vowel) != set([]):
                 return phoList.append('Z')
-            elif
-                                                                                                                                                       
-                
+            elif len(before) >= 4 and len(after) == 1 and self.pound(before[-1]) and self.pound(before[-2]) and self.findConsAfterVowel(before[:-2]):
+                phoList.append('Z')
+                return phoList
+            elif len(before) >=3 and len(after) == 1 and self.pound(before[-1]) and self.findConsAfterVowel(before[:-1]):
+                phoList.append('S')
+                return phoList
+            elif len(before) >= 1 and before[-1] == 'u' and len(after) == 1:
+                phoList.append('S')
+                return phoList
+            elif len(before) >= 1 and len(after) == 1 and self.pound(before[-1]) and set(before[:-1]).intersection(set(self.vowel)) == set([]):
+                phoList.append('Z')
+                return phoList
+            elif len(before) == 0 and len(after) >= 3 and after[1:3] == 'ch':
+                phoList += ['S', 'K']
+                return self.get_oov_pho(before+after[:3], after[3:], phoList)
+            elif len(after) >= 3 and after[1] == 'c' and self.plus(after[2]):
+                return self.get_oov_pho(before+after[:1], after[1:], phoList)
+            elif len(before) >= 1 and self.pound(before[-1]) and len(after) >= 2 and after[1] == 'm':
+                phoList += ['Z', 'M']
+                return self.get_oov_pho(before+after[:2], after[2:], phoList)
+            elif len(before) >=1 and self.pound(before[-1]) and len(after) >= 2 and after[1] == 'n':
+                phoList+= ['Z', 'AX', 'N']
+                return self.get_oov_pho(before+after[:2], after[2:], phoList)
+            else:
+                phoList.append('S')
+                return self.get_oov_pho(before+after[:1], after[1:], phoList)
             
+        elif after[0] == 't':
+            if len(after) == 2 and after[1] == 'o':
+                phoList += ['T', 'UW']
+                return phoList
+            elif len(after) == 4 and after[1:] == 'hat':
+                phoList += ['DH', 'IH', 'S']
+                return phoList
+            elif len(before) == 0 and len(after) >= 4 and after[1:4] == 'hey':
+                phoList += ['DH', 'EY']
+                return self.get_oov_pho(before+after[:4], after[4:], phoList)
+            elif len(before) == 0 and len(after) >= 5 and after[1:5] == 'here':
+                phoList += ['DH', 'EH', 'R']
+                return self.get_oov_pho(before+after[:5], after[5:], phoList)
+            elif len(after) >= 4 and after[1:4] == 'her':
+                phoList += ['DH', 'ER']
+                return self.get_oov_pho(before+after[:4], after[4:], phoList)
+            elif len(after) >= 5 and after[1:5] == 'heir':
+                phoList += ['DH', 'EH', 'R']
+                return self.get_oov_pho(before+after[:5], after[5:], phoList)
+            elif len(after) == 5 and after[1:5] == 'hese':
+                phoList += ['DH', 'IY', 'Z']
+                return phoList
+            elif len(before) == 0 and len(after) >= 4 and after[1:4] == 'hen':
+                phoList += ['DH', 'EH', 'N']
+                return self.get_oov_pho(before+after[:4], after[4:], phoList)
+            elif len(after) >= 7 and after[1:7] == 'hrough':
+                phoList += ['TH', 'R', 'UW']
+                return self.get_oov_pho(before+after[:7], after[7:], phoList)
+            elif len(after) >= 5 and after[1:5] == 'hose':
+                phoList += ['DH', 'OW', 'Z']
+                return self.get_oov_pho(before+after[:5], after[5:], phoList)
+            elif len(after) == 6 and after[1:] == 'hough':
+                phoList += ['DH', 'OW']
+                return phoList
+            elif len(before) == 0 and len(after) >= 4 and after[1:4] == 'hus':
+                phoList += ['DH', 'AH', 'S']
+                return self.get_oov_pho(before+after[:4], after[4:], phoList)
+            elif len(after) >= 2 and after[1] == 'h':
+                phoList.append('TH')
+                return self.get_oov_pho(before+after[:2], after[2:], phoList)
+            elif len(before) >= 1 and len(after) == 3 and set(before).intersection(set(self.vowel)) != set([]) and after[1:] == 'ed':
+                phoList += ['T', 'IH', 'D']
+                return phoList
+            elif len(before) >= 1 and len(after) >= 4 and before[-1] == 's' and after[1] == 'i' and self.pound(after[2]) and after[3] == 'n':
+                phoList.append('CH')
+                return self.get_oov_pho(before+after[:2], after[2:], phoList)
+            elif len(after) >= 3 and after[1:3] == 'io':
+                phoList.append('SH')
+                return self.get_oov_pho(before+after[:2], after[2:], phoList)
+            elif len(after) >= 3 and after[1:3] == 'ia':
+                phoList.append('SH')
+                return self.get_oov_pho(before+after[:2], after[2:], phoList)
+            elif len(after) >= 4 and after[1:4] == 'ien':
+                phoList += ['SH', 'AX', 'N']
+                return self.get_oov_pho(before+after[:4], after[4:], phoList)
+            elif len(after) >= 4 and after[1:3] == 'ur' and self.pound(after[3]):
+                phoList += ['CH', 'ER']
+                return self.get_oov_pho(before+after[:3], after[3:], phoList)
+            elif len(after) >= 3 and after[1:3] == 'ua':
+                phoList += ['CH', 'UW']
+                return self.get_oov_pho(before+after[:2], after[2:], phoList)
+            elif len(before) == 0 and len(after) >= 3 and after[1:3] == 'wo':
+                phoList += ['T', 'UW']
+                return self.get_oov_pho(before+after[:3], after[3:], phoList)
+            else:
+                phoList.append('T')
+                return self.get_oov_pho(before+after[:1], after[1:], phoList)
+
+        elif after[0] == 'u':
+            if len(before) == 0 and len(after) >= 3 and after[1:3] == 'ni':
+                phoList += ['Y', 'UW', 'N']
+                return self.get_oov_pho(before+after[:2], after[2:], phoList)
+            elif len(before) == 0 and len(after) >= 2 and after[1] == 'n':
+                phoList += ['AH', 'N']
+                return self.get_oov_pho(before+after[:2], after[2:], phoList)
+            elif len(before) == 0 and len(after) >= 4 and after[1:4] == 'pon':
+                phoList += ['AX', 'P', 'AO', 'N']
+                return self.get_oov_pho(before+after[:4], after[4:], phoList)
+            elif len(before) >= 1 and self.amp1(before[-1]) and len(after) >= 3 and after[1] == 'r' and self.pound(after[2]):
+                phoList += ['UH', 'R']
+                return self.get_oov_pho(before+after[:2], after[2:], phoList)
+            elif len(before) >= 2 and self.amp2(before[-2:]) and len(after) >= 3 and after[1] =='r' and self.pound(after[2]):
+                phoList+= ['UH', 'R']
+                return self.get_oov_pho(before+after[:2], after[2:], phoList)
+            elif len(after) >= 3 and after[1] =='r' and self.pound(after[2]):
+                phoList+= ['Y', 'UH', 'R']
+                return self.get_oov_pho(before+after[:2], after[2:], phoList)
+            elif len(after) >= 2 and after[1] == 'r':
+                phoList.append('ER')
+                return self.get_oov_pho(before+after[:2], after[2:], phoList)
+            elif len(after) == 2 and self.star(after[1]):
+                phoList.append('AH')
+                return self.get_oov_pho(before+after[:1], after[1:], phoList)
+            elif len(after) >= 3 and self.star(after[1]) and self.star(after[2]):
+                phoList.append('AH')
+                return self.get_oov_pho(before+after[:1], after[1:], phoList)
+            elif len(after) >= 2 and after[1] == 'y':
+                phoList.append('AY')
+                return self.get_oov_pho(before+after[:2], after[2:], phoList)
+            elif len(before) == 1 and before[-1] == 'g' and len(after) >= 2 and self.pound(after[1]):
+                return self.get_oov_pho(before+after[:1], after[1:], phoList)
+            elif len(before) >= 1 and before[-1] == 'g' and self.percent(after[1:]):
+                return self.get_oov_pho(before+after[:1], after[1:], phoList)
+            elif len(before) >= 1 and before[-1] == 'g' and len(after) >= 2 and self.pound(after[1]):
+                phoList.append('W')
+                return self.get_oov_pho(before+after[:1], after[1:], phoList)
+            elif len(before) >= 2 and before[-1] == 'n' and self.pound(before[-2]):
+                phoList += ['Y', 'UW']
+                return self.get_oov_pho(before+after[:1], after[1:], phoList)
+            elif len(before) >= 2 and self.amp2(before[-2:]):
+                phoList.append('UW')
+                return self.get_oov_pho(before+after[:1], after[1:], phoList)
+            elif len(before) >= 1 and self.amp1(before[-1]):
+                phoList.append('UW')
+                return self.get_oov_pho(before+after[:1], after[1:], phoList)
+            else:
+                return self.get_oov_pho(before+after[:1], after[1:], phoList)
+
+        elif after[0] == 'v':
+            if len(after) >= 4 and after[1:4] == 'iew':
+                phoList += ['V', 'Y', 'UW']
+                return self.get_oov_pho(before+after[:4], after[4:], phoList)
+            else:
+                phoList.append('V')
+                return self.get_oov_pho(before+after[:1], after[1:], phoList)
+
+        elif after[0] == 'w':
+            if len(before) == 0 and len(after) >= 4 and after[1:4] == 'ere':
+                phoList += ['W', 'ER']
+                return self.get_oov_pho(before+after[:4], after[4:], phoList)
+            elif len(after) >= 3 and after[1:3] == 'as':
+                phoList += ['W', 'AA']
+                return self.get_oov_pho(before+after[:2], after[2:], phoList)
+            elif len(after) >= 3 and after[1:3]== 'at':
+                phoList+= ['W', 'AA']
+                return self.get_oov_pho(before+after[:2], after[2:], phoList)
+            elif len(after) >= 5 and after[1:5] == 'here':
+                phoList += ['WH', 'EH', 'R']
+                return self.get_oov_pho(before+after[:5], after[5:], phoList)
+            elif len(after) >= 4 and after[1:4] == 'hat':
+                phoList += ['WH', 'AA', 'R']
+                return self.get_oov_pho(before+after[:4], after[4:], phoList)
+            elif len(after) >= 4 and after[1:4] == 'hol':
+                phoList += ['HH', 'OW', 'L']
+                return self.get_oov_pho(before+after[:4], after[4:], phoList)
+            elif len(after) >= 3 and after[1:3] == 'ho':
+                phoList += ['HH', 'UW']
+                return self.get_oov_pho(before+after[:3], after[3:], phoList)
+            elif len(after) >= 2 and after[1] == 'h':
+                phoList.append('WH')
+                return self.get_oov_pho(before+after[:2], after[2:], phoList)
+            elif len(after) >= 3 and after[1:3] == 'ar':
+                phoList += ['W', 'AO', 'R']
+                return self.get_oov_pho(before+after[:3], after[3:], phoList)
+            elif len(after) >= 3 and after[1:3] == 'or':
+                phoList += ['W', 'ER']
+                return self.get_oov_pho(before+after[:3], after[3:], phoList)
+            elif len(after) >= 2 and after[1] == 'r':
+                phoList.append('R')
+                return self.get_oov_pho(before+after[:2], after[2:], phoList)
+            else:
+                phoList.append('R')
+                return self.get_oov_pho(before+after[:1], after[1:], phoList)
+
+        elif after[0] == 'x':
+            phoList += ['K', 'S']
+            return self.get_oov_pho(before+after[:1], after[1:], phoList)
             
+        elif after[0] == 'y':
+            if len(after) >= 5 and after[1:5] == 'oung':
+                phoList += ['Y', 'AH', 'NX']
+                return self.get_oov_pho(before+after[:5], after[5:], phoList)
+            elif len(before) == 0 and len(after) >= 3 and after[1:3] == 'ou':
+                phoList += ['Y', 'UW']
+                return self.get_oov_pho(before+after[:3], after[3:], phoList)
+            elif len(before) == 0 and len(after) >= 3 and after[1:3] == 'es':
+                phoList += ['Y', 'EH', 'S']
+                return self.get_oov_pho(before+after[:3], after[3:], phoList)
+            elif len(before) == 0:
+                phoList.append('Y')
+                return self.get_oov_pho(before+after[:1], after[1:], phoList)
+            elif len(before) >= 2 and len(after) == 1 and self.star(before[-1]) and set(before[:-1]).intersection(set(self.vowel)) != set([]):
+                phoList.append('IY')
+                return self.get_oov_pho(before+after[:1], after[1:], phoList)
+            elif len(before) >=2 and len(after) >= 2 and self.star(before[-1])and set(before[:-1]).intersection(set(self.vowel)) != set([]) and after[1] == 'i':
+                phoList.append('IY')
+                return self.get_oov_pho(before+after[:1], after[1:], phoList)
+            elif len(after) == 1 and set(before).intersection(self.vowel) == set([]):
+                phoList.append('AY')
+                return self.get_oov_pho(before+after[:1], after[1:], phoList)
+            elif len(after) >= 2 and set(before).intersection(self.vowel) == set([]) and self.pound(after[1]):
+                phoList.append('AY')
+                return self.get_oov_pho(before+after[:1], after[1:], phoList)
+            elif len(after) >= 4 and set(before).intersection(self.vowel) == set([]) and self.star(after[1]) and self.plus(after[2]) and set(after[3:]).intersection(self.vowel) != set([]):
+                phoList.append('IH')
+                return self.get_oov_pho(before+after[:1], after[1:], phoList)
+            elif len(after) >= 3 and set(before).intersection(self.vowel) == set([]) and self.star(after[1]) and set(after[2:]).intersection(self.vowel) != set([]):
+                phoList.append('AY')
+                return self.get_oov_pho(before+after[:1], after[1:], phoList)
+            else:
+                phoList.append('IH')
+                return self.get_oov_pho(before+after[:1], after[1:], phoList)
+
+        elif after[0] == 'z':
+            phoList.append('Z')
+            return self.get_oov_pho(before+after[:1], after[1:], phoList)
+        
         return phoList
 
     def pound( self , charSeq ):
@@ -716,3 +964,10 @@ class GenPho( object ):
         else:
             return False
                 
+    def findConsAfterVowel( self , charSeq ):
+        for c in enumerate(charSeq):
+            if c[1] in self.vowel:
+                for d in charSeq[c[0]+1:]:
+                    if d in self.consonant:
+                        return True
+        return False
