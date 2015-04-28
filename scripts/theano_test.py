@@ -1,5 +1,5 @@
-import sys
-sys.path.append('theano_lstm')
+#import sys
+#sys.path.append('theano_lstm')
 from util import *
 
 vocab = Vocab()
