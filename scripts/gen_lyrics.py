@@ -5,7 +5,7 @@ from os import listdir
 
 allLyrics = []
 
-lyricDir = '../data/hirjee_brown_songs'
+lyricDir = '/data1/nlp-data/ghostwriter/data/top-selling-rappers'
 for lyricFile in listdir(lyricDir):
     #print lyricFile.split('-')
     #if lyricFile.split('-')[0] == 'jay':
@@ -14,16 +14,16 @@ for lyricFile in listdir(lyricDir):
 
 #allLyrics = parse_lyrics('test-song')
 #print allLyrics
-nGram = 5
+nGram = 7
 ghostwriter = NGramModel( allLyrics , nGram )
 #print 'start: '+ghostwriter.highestStart
 #print ghostwriter.nGramCount[str(['knew','i'])]
 #print ghostwriter.startList[0][0][str(['<startVerse>'])]
 
 
-history = ['<startVerse>', 'thug']
+history = ['<startVerse>', 'the', 'meaning', 'of', 'life', 'is']
 #counter = 0
-outfile = open('a5', 'a')
+outfile = open('meaning', 'a')
 #while counter < 200:
 current = ''
 while current != '<endVerse>':
