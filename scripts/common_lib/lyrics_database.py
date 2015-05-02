@@ -51,3 +51,26 @@ class LyricsDatabse(object):
 		
 		return result
 	
+	def get_lyrics_from_artist_as_list_of_verses(self, artist):
+		lyrics = self.get_lyrics_from_artist(artist)
+		
+		result = list()
+		current_verse = list()
+		
+		for lyric in lyrics:
+			for word_or_list in lyric:
+				
+				if isinstance(word_or_list, six.string_types):
+					current_verse.append(word_or_list)
+				else:
+					current_verse.extend(word_or_list)
+		
+				if word_or_list == "<endVerse>":
+					result.append(current_verse)
+					current_verse = list()
+
+		return result
+	
+	
+		
+	
