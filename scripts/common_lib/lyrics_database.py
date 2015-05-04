@@ -17,18 +17,23 @@ class LyricsDatabase(object):
 			
 			self.__lyrics_cache[artist].append(f)
 		
-	def __load_lyric(self, filename):
+	def load_lyric(self, filename):
 		path = os.path.join(self.__data_dir, filename)
 		with open(path, 'r') as f:
 			lyric = json.load(f)
 		
 		return lyric
 	
-	def get_lyrics_files_from_artist(self, artist):
+	def get_artists_names(self):
 		if self.__lyrics_cache is None:
-			self.__create_lyrics_cache()		
+			self.__create_lyrics_cache()
+			
+		return self.__lyrics_cache.keys()
 	
-		if artist not in self.__lyrics_cache:
+	def get_lyrics_files_from_artist(self, artist):
+		availabel_artist = self.get_artists_names()
+	
+		if artist not in availabel_artist:
 			return None
 		else:
 			return self.__lyrics_cache[artist]
@@ -37,7 +42,7 @@ class LyricsDatabase(object):
 	def get_lyrics_from_artist(self, artist):
 		lyrics_files = self.get_lyrics_files_from_artist(artist)
 		
-		lyrics = [self.__load_lyric(f) for f in lyrics_files]
+		lyrics = [self.load_lyric(f) for f in lyrics_files]
 		
 		return lyrics
 		
