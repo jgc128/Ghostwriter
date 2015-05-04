@@ -92,7 +92,7 @@ def initial_state_with_taps(layer, dimensions = None ):
 class Model:
     def __init__(self, hidden_size, input_size, vocab_size, stack_size=1, celltype=LSTM):
         # declare model
-        self.model = StackedCells(input_size, celltype=celltype, layers=[hidden_size] * stack_size)
+        self.model = StackedCells(input_size, celltype=celltype, layers=[hidden_size] * stack_size, clip_gradients=1.0)
         # add an embedding
         self.model.layers.insert(0, Embedding(vocab_size, input_size))
         # add a classifier
