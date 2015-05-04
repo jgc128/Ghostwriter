@@ -1,5 +1,6 @@
 from __future__ import print_function
 import os
+import locale
 import argparse
 import subprocess
 
@@ -13,14 +14,20 @@ def run_command(cmd, arguments):
 	else:
 		params.append(arguments)
 		
-	return subprocess.check_output(params)
+	output = subprocess.check_output(params)
+	
+	# convert to string
+	encoding = locale.getdefaultlocale()[1]
+	output_str = output.decode(encoding)
+	
+	return output_str
 	
 	
 def get_lyrics_stat(filename):
 	cmd = 'java'
 	arguments = ['-jar', rhyme_analizer_jar, filename]
 	output = run_command(cmd, arguments)
-	
+
 	result = {}
 	for line in output.split('\n'):
 		dv = line.split(':')
