@@ -28,7 +28,7 @@ class LyricsDatabase(object):
 		if self.__lyrics_cache is None:
 			self.__create_lyrics_cache()
 			
-		return self.__lyrics_cache.keys()
+		return list(self.__lyrics_cache.keys())
 	
 	def get_lyrics_files_from_artist(self, artist):
 		availabel_artist = self.get_artists_names()
