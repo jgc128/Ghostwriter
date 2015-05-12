@@ -1,5 +1,5 @@
 import sys
-sys.path.append('../../../theano_lstm/theano_lstm')
+sys.path.append('/usr/cs/grad/doc/ppotash/ghostwriter/theano_lstm')
 import theano, theano.tensor as T
 import numpy as np
 import theano_lstm
@@ -146,7 +146,7 @@ class Model:
         if greedy:
             outputs_info = [dict(initial=self.priming_word, taps=[-1])] + [initial_state_with_taps(layer) for layer in self.model.layers[1:-1]]
             result, _ = theano.scan(fn=step,
-                                n_steps=200,
+                                n_steps=500,
                                 outputs_info=outputs_info)
         else:
             outputs_info = [initial_state_with_taps(layer, num_examples) for layer in self.model.layers[1:]]
